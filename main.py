@@ -58,9 +58,13 @@ with open(output_csv_file_path, mode='w', encoding='utf8') as csv_file:
     for dictionary in translation_dictionaries:
         for key in dictionary:
             if key not in allTranslationsKeys:
-                allTranslationsKeys.append(key)
-                mapToWrite = {'key': key, intl_reference_dictionary['@@locale']: intl_reference_dictionary.get(key, "")}
-                # go through all dictionaries again to pick up values for this key
-                for item in translation_dictionaries:
-                    mapToWrite[item['@@locale']] = item.get(key, "")
-                writer.writerow(mapToWrite)
+                if key.startswith('@') and key != '@@locale':
+                    continue
+                else:
+                    allTranslationsKeys.append(key)
+                    mapToWrite = {'key': key,
+                                  intl_reference_dictionary['@@locale']: intl_reference_dictionary.get(key, "")}
+                    # go through all dictionaries again to pick up values for this key
+                    for item in translation_dictionaries:
+                        mapToWrite[item['@@locale']] = item.get(key, "")
+                    writer.writerow(mapToWrite)
