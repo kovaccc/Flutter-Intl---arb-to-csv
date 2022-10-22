@@ -15,7 +15,7 @@ for file in l10n_file_names:
     if "arb" in file:
         arb_paths.append(app_translation_dir_path + file)
 
-intl_en_dictionary = {}
+intl_reference_dictionary = {}
 translation_dictionaries = []
 
 for file_path in arb_paths:
@@ -26,23 +26,25 @@ for file_path in arb_paths:
     # get dictionary for reference file
     if reference_arb_name in file_path:
         with open(file_path, 'r', encoding='utf8') as f:
-            intl_en_dictionary = json.load(f)
+            intl_reference_dictionary = json.load(f)
 
 output_csv_file_path = app_translation_dir_path + "translations" + '.csv'
 
 # Write to csv
 with open(output_csv_file_path, mode='w', encoding='utf8') as csv_file:
+    allTranslationsKeys = []
     # create fieldnames for csv file key, en, fr, it...
-    fieldnames = ['key', intl_en_dictionary['@@locale']]
+    fieldnames = ['key', intl_reference_dictionary['@@locale']]
     for dictionary in translation_dictionaries:
         fieldnames.append(dictionary['@@locale'])
 
     # create writer with fieldnames
     writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
 
-    for key in intl_en_dictionary:
+    for key in intl_reference_dictionary:
         # add en key and value because it is referent
-        mapToWrite = {'key': key, intl_en_dictionary['@@locale']: intl_en_dictionary[key]}
+        allTranslationsKeys.append(key)
+        mapToWrite = {'key': key, intl_reference_dictionary['@@locale']: intl_reference_dictionary[key]}
         # go through all keys for each language and check if exists,
         # if yes then add it, otherwise just add empty string
         for dictionary in translation_dictionaries:
@@ -51,3 +53,14 @@ with open(output_csv_file_path, mode='w', encoding='utf8') as csv_file:
                 translationText = dictionary[key]
             mapToWrite[dictionary['@@locale']] = translationText
         writer.writerow(mapToWrite)
+
+    # if some key exists in another .arb file and not in reference (should not be the case)
+    for dictionary in translation_dictionaries:
+        for key in dictionary:
+            if key not in allTranslationsKeys:
+                allTranslationsKeys.append(key)
+                mapToWrite = {'key': key, intl_reference_dictionary['@@locale']: intl_reference_dictionary.get(key, "")}
+                # go through all dictionaries again to pick up values for this key
+                for item in translation_dictionaries:
+                    mapToWrite[item['@@locale']] = item.get(key, "")
+                writer.writerow(mapToWrite)
