@@ -42,6 +42,8 @@ with open(output_csv_file_path, mode='w', encoding='utf8') as csv_file:
     writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
 
     for key in intl_reference_dictionary:
+        if key.startswith('@') and key != '@@locale':
+            continue
         # add en key and value because it is referent
         allTranslationsKeys.append(key)
         mapToWrite = {'key': key, intl_reference_dictionary['@@locale']: intl_reference_dictionary[key]}
