@@ -4,6 +4,7 @@ from os import walk
 
 app_path = input("Enter path to your Flutter application: ")
 reference_arb_name = input("Enter the name of reference .arb file (where all strings are up-to-date): ")
+
 app_translation_dir_path = app_path + '/' + 'lib/l10n/'
 
 # all files in lib/l10n/ directory
@@ -31,7 +32,7 @@ for file_path in arb_paths:
 output_csv_file_path = app_translation_dir_path + "translations" + '.csv'
 
 # Write to csv
-with open(output_csv_file_path, mode='w', encoding='utf8') as csv_file:
+with open(output_csv_file_path, mode='w', encoding='utf-8-sig') as csv_file:
     allTranslationsKeys = []
     # create fieldnames for csv file key, en, fr, it...
     fieldnames = ['key', intl_reference_dictionary['@@locale']]
