@@ -22,11 +22,11 @@ translation_dictionaries = []
 for file_path in arb_paths:
     # get dictionaries for all arb files
     if reference_arb_name not in file_path:
-        with open(file_path, 'r', encoding='utf8') as f:
+        with open(file_path, 'r', encoding='utf-8-sig') as f:
             translation_dictionaries.append(json.load(f))
     # get dictionary for reference file
     if reference_arb_name in file_path:
-        with open(file_path, 'r', encoding='utf8') as f:
+        with open(file_path, 'r', encoding='utf-8-sig') as f:
             intl_reference_dictionary = json.load(f)
 
 output_csv_file_path = app_translation_dir_path + "translations" + '.csv'
